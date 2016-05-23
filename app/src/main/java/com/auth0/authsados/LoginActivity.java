@@ -3,9 +3,10 @@ package com.auth0.authsados;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -25,16 +26,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, GoogleApiClient.ConnectionCallbacks {
+
+    public static final String ACTION_REQUEST_SIGN_OUT = "action_sign_out";
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 12;
-    public static final String AUTH0_DOMAIN = "@auth0.com";
+    private static final String AUTH0_DOMAIN = "@auth0.com";
 
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private SignInButton signInButton;
-    private Button signOutButton;
+    private boolean requestedSignOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +54,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        signOutButton = (Button) findViewById(R.id.logoutButton);
-        signOutButton.setOnClickListener(this);
+        mGoogleApiClient.registerConnectionCallbacks(this);
 
         signInButton = (SignInButton) findViewById(R.id.loginButton);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -64,14 +65,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                updateUI(currentUser != null);
+                if (currentUser != null && !requestedSignOut) {
+                    Log.e(TAG, "Logged in!");
+                    FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
+                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(i);
+                    finish();
+                }
             }
         };
-    }
-
-    private void updateUI(boolean loggedIn) {
-        signInButton.setVisibility(loggedIn ? View.GONE : View.VISIBLE);
-        signOutButton.setVisibility(loggedIn ? View.VISIBLE : View.GONE);
+        requestedSignOut = getIntent().getAction().equalsIgnoreCase(ACTION_REQUEST_SIGN_OUT);
     }
 
     @Override
@@ -152,5 +155,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 signOut();
                 break;
         }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (requestedSignOut) {
+            signOut();
+            requestedSignOut = false;
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
     }
 }
