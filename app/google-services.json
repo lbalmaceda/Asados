@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "804427511952",
+    "firebase_url": "https://authsados.firebaseio.com",
+    "project_id": "authsados",
+    "storage_bucket": "authsados.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804427511952:android:490a964cfffc2df5",
+        "android_client_info": {
+          "package_name": "com.auth0.authsados"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804427511952-q9fdlqd4b0tanen2rrtfnbh8j7itkp78.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.auth0.authsados",
+            "certificate_hash": "9E8EF5EB7DC9002DEA83341809BB24A6B52BE799"
+          }
+        },
+        {
+          "client_id": "804427511952-9q4vah0ijp31knr5tqs3a0kbbdv80e0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkcDdRcatDWWU2oX2SZoO6OAUO7T2Zy9Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804427511952-9q4vah0ijp31knr5tqs3a0kbbdv80e0f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
