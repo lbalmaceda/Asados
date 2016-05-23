@@ -27,7 +27,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 12;
+    public static final String AUTH0_DOMAIN = "@auth0.com";
+
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private SignInButton signInButton;
@@ -94,9 +97,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-
-                        }
                     }
                 });
     }
@@ -117,6 +117,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
 
         final GoogleSignInAccount acc = result.getSignInAccount();
+        if (!acc.getEmail().endsWith(AUTH0_DOMAIN)) {
+            Toast.makeText(LoginActivity.this, "Invalid email! Only for Auth0 employees.", Toast.LENGTH_SHORT).show();
+            signOut();
+            return;
+        }
         AuthCredential credential = GoogleAuthProvider.getCredential(acc.getIdToken(), null);
         FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -139,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        switch (id){
+        switch (id) {
             case R.id.loginButton:
                 signIn();
                 break;
