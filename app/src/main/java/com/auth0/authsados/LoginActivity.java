@@ -25,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, GoogleApiClient.ConnectionCallbacks {
 
@@ -67,14 +69,25 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 if (currentUser != null && !requestedSignOut) {
                     Log.e(TAG, "Logged in!");
+                    persistUserData();
                     FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(i);
                     finish();
                 }
             }
         };
         requestedSignOut = getIntent().getAction().equalsIgnoreCase(ACTION_REQUEST_SIGN_OUT);
+    }
+
+    private void persistUserData() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
+                .child(FirebaseConstants.ROOT_USERS)
+                .child(user.getUid());
+        userRef.child(FirebaseConstants.USER_NAME).setValue(user.getDisplayName());
+        userRef.child(FirebaseConstants.USER_AVATAR).setValue(user.getPhotoUrl().toString());
     }
 
     @Override

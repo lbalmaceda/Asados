@@ -9,18 +9,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.auth0.authsados.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="@+id/logoutButton"
-        android:layout_centerHorizontal="true"
-        android:text="MainActivity"
-        android:textSize="30sp" />
-
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:text="Sign Out" />
+
+    <FrameLayout
+        android:id="@+id/fragmentContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/logoutButton" />
 </RelativeLayout>
