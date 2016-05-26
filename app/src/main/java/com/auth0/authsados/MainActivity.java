@@ -2,12 +2,9 @@ package com.auth0.authsados;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,15 +15,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button signOutButton = (Button) findViewById(R.id.logoutButton);
-        signOutButton.setOnClickListener(new View.OnClickListener() {
+        Button logoutButton = (Button) findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 forceSignOut();
             }
         });
+
+
+        Button addButton = (Button) findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddFragment();
+            }
+        });
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContent, new UserProfileFragment())
+                .replace(R.id.fragmentContent, new AsadoFragment())
+                .commit();
+    }
+
+    private void showAddFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContent, new CreateAsadoFragment())
+                .addToBackStack(null)
                 .commit();
     }
 

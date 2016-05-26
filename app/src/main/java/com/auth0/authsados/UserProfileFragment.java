@@ -42,7 +42,6 @@ public class UserProfileFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_user_profile, container, false);
         final TextView nameText = (TextView) v.findViewById(R.id.name);
-        final TextView avatarText = (TextView) v.findViewById(R.id.avatar);
         final RadioGroup genderGroup = (RadioGroup) v.findViewById(R.id.genderGroup);
         final CheckBox adminCheckbox = (CheckBox) v.findViewById(R.id.adminCheckbox);
 
@@ -51,8 +50,11 @@ public class UserProfileFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 nameText.setText(user.name);
-                avatarText.setText(user.avatar);
-                genderGroup.check("male".equalsIgnoreCase(user.gender) ? R.id.radioGenderMale : R.id.radioGenderFemale);
+                if ("female".equalsIgnoreCase(user.gender)) {
+                    genderGroup.check(R.id.radioGenderFemale);
+                } else if ("male".equalsIgnoreCase(user.gender)) {
+                    genderGroup.check(R.id.radioGenderMale);
+                }
                 adminCheckbox.setChecked(user.isAdmin);
             }
 
@@ -76,23 +78,6 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mUserRef.child(FirebaseConstants.USER_ADMIN).setValue(isChecked);
-            }
-        });
-
-        nameText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mUserRef.child(FirebaseConstants.USER_NAME).setValue(s.toString());
             }
         });
         return v;

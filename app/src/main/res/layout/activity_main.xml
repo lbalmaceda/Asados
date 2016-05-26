@@ -14,8 +14,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="Sign Out" />
+        android:text="Log out!" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/logoutButton"
+        android:text="Add Asado" />
 
     <FrameLayout
         android:id="@+id/fragmentContent"
