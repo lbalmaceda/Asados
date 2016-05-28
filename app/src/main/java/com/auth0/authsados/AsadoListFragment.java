@@ -16,9 +16,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by lbalmaceda on 5/25/16.
  */
@@ -47,13 +44,10 @@ public class AsadoListFragment extends Fragment {
         mAdapter = new FirebaseRecyclerAdapter<Asado, AsadoVH>(Asado.class, R.layout.item_asado, AsadoVH.class, mAsadosRef) {
             @Override
             protected void populateViewHolder(AsadoVH holder, Asado model, int position) {
-                String finalDate = model.finalDate;
-                if (finalDate == null) {
-                    finalDate = "Not defined yet..";
-                }
+                String finalDate = model.selectedDate != null ? model.selectedDate.date : "Not defined yet..";
                 holder.dateTextView.setText(String.format("Final date: %s", finalDate));
                 holder.locationTextView.setText(String.format("Location: %s", model.location));
-                holder.assistantCountTextView.setText(String.format("Assistants: %d", model.assistants.size()));
+//                holder.assistantCountTextView.setText(String.format("Assistants: %d", model.assistants.size()));
             }
         };
 

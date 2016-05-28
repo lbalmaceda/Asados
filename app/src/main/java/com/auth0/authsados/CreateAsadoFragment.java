@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.auth0.authsados.pojo.Asado;
-import com.auth0.authsados.pojo.Poll;
-import com.auth0.authsados.pojo.PollOption;
-import com.google.firebase.database.DatabaseError;
+import com.auth0.authsados.pojo.DatePoll;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -53,32 +52,26 @@ public class CreateAsadoFragment extends Fragment implements View.OnClickListene
         return v;
     }
 
-    private void saveAsado(final Asado asado, @Nullable Poll poll) {
-        if (poll == null) {
-            FirebaseDatabase.getInstance().getReference()
-                    .child(FirebaseConstants.ROOT_ASADOS)
-                    .push().setValue(asado);
-            getFragmentManager().popBackStack();
-            return;
-        }
+    private void saveAsado(final Asado asado, List<DatePoll> suggestedDates) {
 
-        final DatabaseReference pollRef = FirebaseDatabase.getInstance().getReference()
-                .child(FirebaseConstants.ROOT_POLLS)
+        final DatabaseReference newAsadoRef = FirebaseDatabase.getInstance().getReference()
+                .child(FirebaseConstants.ROOT_ASADOS)
                 .push();
-        asado.datePoll = pollRef.getKey();
-        pollRef.setValue(poll, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                String key = databaseReference.getKey();
-                if (databaseError != null) {
-                    return;
-                }
-                FirebaseDatabase.getInstance().getReference()
-                        .child(FirebaseConstants.ROOT_ASADOS)
-                        .push().setValue(asado);
-                getFragmentManager().popBackStack();
+        if (suggestedDates.size() == 1) {
+            asado.selectedDate = suggestedDates.get(0);
+        } else {
+            final DatabaseReference pollsRef = FirebaseDatabase.getInstance().getReference()
+                    .child(FirebaseConstants.ROOT_DATE_POLLS)
+                    .child(newAsadoRef.getKey());
+
+            for (DatePoll dp : suggestedDates) {
+                pollsRef.push().setValue(dp);
             }
-        });
+        }
+        newAsadoRef.setValue(asado);
+
+        getFragmentManager().popBackStack();
+        Toast.makeText(getActivity(), "Asado created!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -129,31 +122,19 @@ public class CreateAsadoFragment extends Fragment implements View.OnClickListene
         if (!validateFields()) {
             return;
         }
-        List<String> dates = new ArrayList<>();
+        Asado asado = new Asado(locationEditText.getText().toString());
+        List<DatePoll> polls = new ArrayList<>();
         if (!pickedDate1.getText().toString().isEmpty()) {
-            dates.add(pickedDate1.getText().toString());
+            polls.add(new DatePoll(pickedDate1.getText().toString()));
         }
         if (!pickedDate2.getText().toString().isEmpty()) {
-            dates.add(pickedDate2.getText().toString());
+            polls.add(new DatePoll(pickedDate2.getText().toString()));
         }
         if (!pickedDate3.getText().toString().isEmpty()) {
-            dates.add(pickedDate3.getText().toString());
+            polls.add(new DatePoll(pickedDate3.getText().toString()));
         }
 
-        Asado asado;
-        Poll poll = null;
-        if (dates.size() == 1) {
-            asado = new Asado(locationEditText.getText().toString(), dates.get(0));
-        } else {
-            asado = new Asado(locationEditText.getText().toString());
-            List<PollOption> pollOptions = new ArrayList<>();
-            for (String date : dates) {
-                pollOptions.add(new PollOption(date));
-            }
-            poll = new Poll(pollOptions);
-        }
-
-        saveAsado(asado, poll);
+        saveAsado(asado, polls);
     }
 
     private boolean validateFields() {

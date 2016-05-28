@@ -12,8 +12,7 @@ public abstract class FirebaseConstants {
     public static final String USER_GENDER = "gender";
     public static final String USER_ADMIN = "isAdmin";
 
-    public static final String ROOT_PREFERENCES = "preferences";
     public static final String ROOT_ASADOS = "asados";
-    public static final String ROOT_POLLS = "polls";
+    public static final String ROOT_DATE_POLLS = "datePolls";
 
 }

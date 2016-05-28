@@ -5,7 +5,7 @@ package com.auth0.authsados.pojo;
  */
 public class User {
     public String name;
-    public String avatar;
+    public String avatarUrl;
     public String gender;
     public boolean isAdmin;
 
